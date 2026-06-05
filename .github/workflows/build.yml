@@ -25,13 +25,13 @@ jobs:
           sudo tar -xf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz -C /opt
           echo "ARM_TOOLCHAIN=/opt/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi" >> $GITHUB_ENV
 
-      - name: Clone STM32CubeF4 HAL (shallow)
+      - name: Clone STM32F4 HAL Driver (shallow)
         run: |
-          git clone --depth 1 https://github.com/STMicroelectronics/STM32CubeF4.git cube_f4
+          git clone --depth 1 https://github.com/STMicroelectronics/stm32f4xx_hal_driver.git hal_drv
           mkdir -p Drivers/STM32F4xx_HAL_Driver
-          cp -r cube_f4/Drivers/STM32F4xx_HAL_Driver/Src Drivers/STM32F4xx_HAL_Driver/
-          cp -r cube_f4/Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/
-          rm -rf cube_f4
+          cp -r hal_drv/Src Drivers/STM32F4xx_HAL_Driver/
+          cp -r hal_drv/Inc Drivers/STM32F4xx_HAL_Driver/
+          rm -rf hal_drv
 
       - name: Clone CMSIS device headers (shallow)
         run: |
@@ -41,15 +41,15 @@ jobs:
           cp -r cmsis_f4/Source Drivers/CMSIS/Device/ST/STM32F4xx/
           rm -rf cmsis_f4
 
-      - name: Fetch CMSIS Core headers
+      - name: Fetch CMSIS Core headers (sparse checkout)
         run: |
           mkdir -p Drivers/CMSIS/Include
-          CMSIS_RAW="https://raw.githubusercontent.com/ARM-software/CMSIS_5/develop/CMSIS/Core/Include"
-          curl -fsSL "$CMSIS_RAW/cmsis_compiler.h" -o Drivers/CMSIS/Include/cmsis_compiler.h
-          curl -fsSL "$CMSIS_RAW/cmsis_gcc.h"      -o Drivers/CMSIS/Include/cmsis_gcc.h
-          curl -fsSL "$CMSIS_RAW/cmsis_version.h"  -o Drivers/CMSIS/Include/cmsis_version.h
-          curl -fsSL "$CMSIS_RAW/core_cm4.h"       -o Drivers/CMSIS/Include/core_cm4.h
-          curl -fsSL "$CMSIS_RAW/mpu_armv7.h"      -o Drivers/CMSIS/Include/mpu_armv7.h
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/ARM-software/CMSIS_5.git cmsis_core
+          cd cmsis_core
+          git sparse-checkout set CMSIS/Core/Include
+          cd ..
+          cp cmsis_core/CMSIS/Core/Include/*.h Drivers/CMSIS/Include/
+          rm -rf cmsis_core
 
       - name: Create linker script
         run: |
