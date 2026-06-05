@@ -1,0 +1,224 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-size: 14px;
+}
+
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #161b22;
+  border-bottom: 2px solid #30363d;
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+header h1 {
+  font-size: 18px;
+  color: #58a6ff;
+}
+
+#status-bar {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+}
+
+#status-bar span {
+  padding: 4px 10px;
+  background: #21262d;
+  border-radius: 4px;
+}
+
+.alarm-off {
+  color: #3fb950;
+}
+
+.alarm-on {
+  color: #f85149;
+  animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.5; }
+}
+
+/* Sections */
+section {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+section h2 {
+  font-size: 16px;
+  color: #58a6ff;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 8px;
+}
+
+/* Grid Layouts */
+#sensor-grid,
+#pid-grid,
+#output-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+/* Cards */
+.sensor-card,
+.pid-card,
+.output-card {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.sensor-card h3,
+.pid-card h3,
+.output-card h3 {
+  font-size: 13px;
+  color: #8b949e;
+  margin-bottom: 8px;
+}
+
+.temp-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #58a6ff;
+}
+
+.temp-value.fault {
+  color: #f85149;
+}
+
+/* PID Cards */
+.pid-card .sp-label {
+  font-size: 12px;
+  color: #8b949e;
+  margin-top: 4px;
+}
+
+.pid-card .output-bar {
+  height: 6px;
+  background: #30363d;
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.pid-card .output-bar-fill {
+  height: 100%;
+  background: #3fb950;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.pid-card .tuning-info {
+  font-size: 11px;
+  color: #8b949e;
+  margin-top: 6px;
+}
+
+.pid-card button,
+.output-card button {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  background: #21262d;
+  color: #c9d1d9;
+  cursor: pointer;
+  margin: 4px 2px;
+}
+
+.pid-card button:hover {
+  background: #30363d;
+}
+
+.pid-card button.active {
+  background: #238636;
+  border-color: #238636;
+  color: #fff;
+}
+
+/* Output Cards */
+.output-card .output-bar {
+  height: 8px;
+  background: #30363d;
+  border-radius: 4px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.output-card .output-bar-fill {
+  height: 100%;
+  background: #d2991d;
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+/* Trend Chart */
+#trend-panel {
+  position: relative;
+}
+
+#trend-chart {
+  width: 100%;
+  height: 300px;
+  background: #0d1117;
+  border-radius: 4px;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  color: #484f58;
+  font-size: 11px;
+  margin-top: 16px;
+  padding: 12px;
+}
+
+/* Inputs */
+input[type="number"] {
+  width: 70px;
+  padding: 4px;
+  background: #0d1117;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* Fault Indicator */
+.fault-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.fault-ok  { background: #3fb950; }
+.fault-bad { background: #f85149; }

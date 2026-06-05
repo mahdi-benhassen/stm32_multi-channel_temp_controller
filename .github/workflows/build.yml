@@ -1,0 +1,140 @@
+name: STM32 Build CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install ARM GNU Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+          wget -q https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz
+          sudo tar -xf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz -C /opt
+          echo "ARM_TOOLCHAIN=/opt/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi" >> $GITHUB_ENV
+
+      - name: Download STM32CubeF4 HAL
+        run: |
+          mkdir -p Drivers
+          ST_HAL_URL="https://raw.githubusercontent.com/STMicroelectronics/STM32CubeF4/master/Drivers/STM32F4xx_HAL_Driver/Src"
+          ST_HAL_INC="https://raw.githubusercontent.com/STMicroelectronics/STM32CubeF4/master/Drivers/STM32F4xx_HAL_Driver/Inc"
+          ST_CMSIS="https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Include"
+          mkdir -p Drivers/STM32F4xx_HAL_Driver/Src
+          mkdir -p Drivers/STM32F4xx_HAL_Driver/Inc
+          mkdir -p Drivers/CMSIS/Include
+          mkdir -p Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc
+          mkdir -p Drivers/CMSIS/Device/ST/STM32F4xx/Include
+
+          HAL_SRC_FILES=(
+            stm32f4xx_hal.c stm32f4xx_hal_cortex.c stm32f4xx_hal_rcc.c
+            stm32f4xx_hal_gpio.c stm32f4xx_hal_spi.c stm32f4xx_hal_uart.c
+            stm32f4xx_hal_dac.c stm32f4xx_hal_tim.c stm32f4xx_hal_pwr.c
+            stm32f4xx_hal_flash.c
+          )
+          for f in "${HAL_SRC_FILES[@]}"; do
+            curl -sL "$ST_HAL_URL/$f" -o "Drivers/STM32F4xx_HAL_Driver/Src/$f"
+          done
+
+          HAL_INC_FILES=(
+            stm32f4xx_hal.h stm32f4xx_hal_def.h stm32f4xx_hal_rcc.h
+            stm32f4xx_hal_rcc_ex.h stm32f4xx_hal_gpio.h stm32f4xx_hal_gpio_ex.h
+            stm32f4xx_hal_dma.h stm32f4xx_hal_dma_ex.h stm32f4xx_hal_spi.h
+            stm32f4xx_hal_uart.h stm32f4xx_hal_dac.h stm32f4xx_hal_dac_ex.h
+            stm32f4xx_hal_tim.h stm32f4xx_hal_tim_ex.h stm32f4xx_hal_pwr.h
+            stm32f4xx_hal_pwr_ex.h stm32f4xx_hal_flash.h stm32f4xx_hal_flash_ex.h
+            stm32f4xx_hal_cortex.h
+          )
+          for f in "${HAL_INC_FILES[@]}"; do
+            curl -sL "$ST_HAL_INC/$f" -o "Drivers/STM32F4xx_HAL_Driver/Inc/$f"
+          done
+
+          curl -sL "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Source/Templates/gcc/startup_stm32f407xx.s" \
+            -o "Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f407xx.s"
+          curl -sL "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Include/stm32f4xx.h" \
+            -o "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+          curl -sL "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Include/stm32f407xx.h" \
+            -o "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+          curl -sL "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Include/system_stm32f4xx.h" \
+            -o "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/cmsis_compiler.h" \
+            -o "Drivers/CMSIS/Include/cmsis_compiler.h"
+          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/cmsis_gcc.h" \
+            -o "Drivers/CMSIS/Include/cmsis_gcc.h"
+          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/cmsis_version.h" \
+            -o "Drivers/CMSIS/Include/cmsis_version.h"
+          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/core_cm4.h" \
+            -o "Drivers/CMSIS/Include/core_cm4.h"
+          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/mpu_armv7.h" \
+            -o "Drivers/CMSIS/Include/mpu_armv7.h"
+
+      - name: Create linker script
+        run: |
+          cat > STM32F407VG_FLASH.ld << 'LDEOL'
+          MEMORY
+          {
+            FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 1024K
+            RAM   (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+            CCMRAM(rw)  : ORIGIN = 0x10000000, LENGTH = 64K
+          }
+
+          _estack = ORIGIN(RAM) + LENGTH(RAM);
+
+          SECTIONS
+          {
+            .isr_vector : { KEEP(*(.isr_vector)) } >FLASH
+            .text : { *(.text*) *(.glue_7) *(.glue_7t) } >FLASH
+            .rodata : { *(.rodata*) } >FLASH
+            .init_array : { __init_array_start = .; KEEP(*(SORT(.init_array.*))) KEEP(*(.init_array)) __init_array_end = .; } >FLASH
+            .data : { __data_start = .; *(.data*) __data_end = .; } >RAM AT>FLASH
+            .bss : { __bss_start = .; *(.bss*) *(COMMON) __bss_end = .; } >RAM
+          }
+          LDEOL
+
+      - name: Create CMake toolchain file
+        run: |
+          cat > toolchain-arm-none-eabi.cmake << 'TCEOL'
+          set(CMAKE_SYSTEM_NAME Generic)
+          set(CMAKE_SYSTEM_PROCESSOR arm)
+
+          set(CMAKE_C_COMPILER "$ENV{ARM_TOOLCHAIN}/bin/arm-none-eabi-gcc")
+          set(CMAKE_CXX_COMPILER "$ENV{ARM_TOOLCHAIN}/bin/arm-none-eabi-g++")
+          set(CMAKE_ASM_COMPILER "$ENV{ARM_TOOLCHAIN}/bin/arm-none-eabi-gcc")
+          set(CMAKE_OBJCOPY "$ENV{ARM_TOOLCHAIN}/bin/arm-none-eabi-objcopy")
+          set(CMAKE_SIZE "$ENV{ARM_TOOLCHAIN}/bin/arm-none-eabi-size")
+
+          set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+          set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+          set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+          TCEOL
+
+      - name: Build firmware
+        run: |
+          mkdir build
+          cd build
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=../toolchain-arm-none-eabi.cmake \
+            -DCMAKE_BUILD_TYPE=MinSizeRel \
+            -G Ninja
+          cmake --build . 2>&1
+
+      - name: Print binary size
+        run: |
+          ${{ env.ARM_TOOLCHAIN }}/bin/arm-none-eabi-size build/stm32_temp_controller
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-binaries
+          path: |
+            build/stm32_temp_controller
+            build/stm32_temp_controller.elf
+          if-no-files-found: warn

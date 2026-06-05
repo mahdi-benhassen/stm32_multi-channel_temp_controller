@@ -1,0 +1,28 @@
+# Build artifacts
+build/
+*.o
+*.obj
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.uvoptx
+*.uvguix
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies (fetched by CI)
+Drivers/STM32F4xx_HAL_Driver/
+Drivers/CMSIS/
+STM32F407VG_FLASH.ld
+toolchain-arm-none-eabi.cmake

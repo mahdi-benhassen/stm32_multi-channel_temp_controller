@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Channel Temperature Controller</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Temperature Controller</h1>
+      <div id="status-bar">
+        <span id="sys-state">State: --</span>
+        <span id="sys-uptime">Uptime: --</span>
+        <span id="sys-alarms" class="alarm-off">Alarms: 0</span>
+      </div>
+    </header>
+
+    <main>
+      <section id="sensors-panel">
+        <h2>Sensor Readings</h2>
+        <div id="sensor-grid"></div>
+      </section>
+
+      <section id="pid-panel">
+        <h2>PID Control Channels</h2>
+        <div id="pid-grid"></div>
+      </section>
+
+      <section id="output-panel">
+        <h2>Output Channels</h2>
+        <div id="output-grid"></div>
+      </section>
+
+      <section id="trend-panel">
+        <h2>Real-Time Temperature Trends</h2>
+        <canvas id="trend-chart" width="800" height="300"></canvas>
+      </section>
+    </main>
+
+    <footer>STM32 Multi-Channel Temp Controller v1.0</footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
