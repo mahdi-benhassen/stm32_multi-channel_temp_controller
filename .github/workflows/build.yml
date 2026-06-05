@@ -41,13 +41,14 @@ jobs:
           cp -r cmsis_f4/Source Drivers/CMSIS/Device/ST/STM32F4xx/
           rm -rf cmsis_f4
 
-      - name: Fetch CMSIS Core headers (sparse checkout)
+      - name: Fetch CMSIS Core headers
         run: |
-          mkdir -p Drivers/CMSIS/Include
-          git clone --depth 1 --filter=blob:none --sparse https://github.com/ARM-software/CMSIS_5.git cmsis_core
+          git clone --depth 1 --filter=tree:0 https://github.com/ARM-software/CMSIS_5.git cmsis_core
           cd cmsis_core
-          git sparse-checkout set CMSIS/Core/Include
+          git sparse-checkout set --no-cone CMSIS/Core/Include
+          git checkout
           cd ..
+          mkdir -p Drivers/CMSIS/Include
           cp cmsis_core/CMSIS/Core/Include/*.h Drivers/CMSIS/Include/
           rm -rf cmsis_core
 

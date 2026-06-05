@@ -14,7 +14,6 @@
 SystemState_t g_sys;
 
 static void SystemClock_Config(void);
-static void System_Init(void);
 uint16_t Float_To_ModbusReg(float value, float scale);
 float    ModbusReg_To_Float(uint16_t reg_val, float scale);
 
@@ -46,7 +45,6 @@ int main(void) {
     uint32_t last_pid_time   = HAL_GetTick();
     uint32_t last_sensor_time = HAL_GetTick();
     uint32_t last_safety_time  = HAL_GetTick();
-    uint32_t last_modbus_time  = HAL_GetTick();
 
     while (1) {
         g_sys.system_ticks_ms = HAL_GetTick();
@@ -103,11 +101,6 @@ int main(void) {
 }
 
 /* ==================== System Helper Functions ==================== */
-
-static void System_Init(void) {
-    memset(&g_sys, 0, sizeof(SystemState_t));
-    g_sys.controller_state = CONTROLLER_STATE_INIT;
-}
 
 void System_Update_Modbus_Registers(void) {
     /* Write sensor PV values (scaled: °C × 10) */
