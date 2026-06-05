@@ -4,11 +4,21 @@
 #include "system_config.h"
 #include "data_structures.h"
 
+#if defined(LWIP_OPTS_H) || defined(__DOXYGEN__)
 #include "lwip/opt.h"
 #include "lwip/arch.h"
 #include "lwip/api.h"
 #include "lwip/tcp.h"
 #include "lwip/netif.h"
+#else
+struct netconn;
+struct netbuf;
+typedef int err_t;
+#define ERR_OK 0
+#define NETCONN_TCP 1
+#define NETCONN_COPY 2
+#define IP_ADDR_ANY 0
+#endif
 
 #define HTTP_MAX_URI_LEN            128
 #define HTTP_MAX_RESPONSE_LEN       4096

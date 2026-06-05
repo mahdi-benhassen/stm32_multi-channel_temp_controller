@@ -51,8 +51,8 @@
 /* ==================== Output Configuration ==================== */
 #define NUM_OUTPUT_CHANNELS      4
 #define OUTPUT_MODE_AO          0    /* 0-10V Analog Output via DAC */
-#define OUTPUT_MODE_PWM         1    /* PWM Digital Output */
-#define ACTIVE_OUTPUT_MODE       OUTPUT_MODE_PWM
+#define OUTPUT_MODE_PWM_VAL     1    /* PWM Digital Output */
+#define ACTIVE_OUTPUT_MODE       OUTPUT_MODE_PWM_VAL
 
 #define DAC_INSTANCE             DAC
 #define DAC_CHANNEL_1            DAC_CHANNEL_1

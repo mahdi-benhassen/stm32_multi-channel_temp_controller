@@ -1,6 +1,7 @@
 #include "sensor_driver.h"
 #include "spi_driver.h"
 #include <string.h>
+#include <math.h>
 
 #define MAX31855_DATA_SIZE      4
 #define MAX31865_DATA_SIZE      4
@@ -60,7 +61,7 @@ static void MAX31865_DecodeRaw(uint32_t raw_data, float *temp, uint8_t *fault) {
     }
 }
 
-static SensorStatus_t MAX31855_Read(uint8_t channel_index, float *temperature, float *cold_junction, uint8_t *fault) {
+SensorStatus_t MAX31855_Read(uint8_t channel_index, float *temperature, float *cold_junction, uint8_t *fault) {
     if (channel_index >= NUM_SENSOR_CHANNELS) {
         return SENSOR_ERR_INVALID;
     }
@@ -88,7 +89,7 @@ static SensorStatus_t MAX31855_Read(uint8_t channel_index, float *temperature, f
     return SENSOR_OK;
 }
 
-static SensorStatus_t MAX31865_Read(uint8_t channel_index, float *temperature, uint8_t *fault) {
+SensorStatus_t MAX31865_Read(uint8_t channel_index, float *temperature, uint8_t *fault) {
     if (channel_index >= NUM_SENSOR_CHANNELS) {
         return SENSOR_ERR_INVALID;
     }

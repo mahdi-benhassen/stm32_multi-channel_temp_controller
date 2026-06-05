@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#if defined(LWIP_OPTS_H)
+
 static struct netconn *http_conn = NULL;
 static struct netconn *http_new_conn = NULL;
 static err_t http_err;
@@ -240,11 +242,13 @@ void HTTP_Json_ConfigGet(char *buffer, uint16_t max_len) {
 #else
              "MAX31865",
 #endif
-#if ACTIVE_OUTPUT_MODE == OUTPUT_MODE_AO
-             "analog_0-10V",
-#else
+#if ACTIVE_OUTPUT_MODE == OUTPUT_MODE_PWM_VAL
              "PWM",
+#else
+             "analog_0-10V",
 #endif
              PID_SAMPLE_TIME_MS,
              MAX_SAFE_TEMPERATURE_C, MIN_SAFE_TEMPERATURE_C);
 }
+
+#endif /* LWIP_OPTS_H */

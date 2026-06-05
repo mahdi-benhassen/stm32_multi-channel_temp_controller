@@ -23,7 +23,6 @@ set(CORE_SOURCES
     Src/modbus_server.c
     Src/http_server.c
     Src/safety_monitor.c
-    Src/webui_data.c
 )
 
 # HAL sources (include from STM32Cube package)
@@ -43,6 +42,7 @@ set(HAL_SOURCES
 # Startup
 set(STARTUP_SOURCES
     Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f407xx.s
+    Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
 )
 
 set(SOURCES ${CORE_SOURCES} ${HAL_SOURCES} ${STARTUP_SOURCES})

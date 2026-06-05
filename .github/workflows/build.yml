@@ -14,67 +14,42 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install ARM GNU Toolchain
+      - name: Install build tools
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake ninja-build
+
+      - name: Install ARM GNU Toolchain
+        run: |
           wget -q https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz
           sudo tar -xf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz -C /opt
           echo "ARM_TOOLCHAIN=/opt/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi" >> $GITHUB_ENV
 
-      - name: Download STM32CubeF4 HAL
+      - name: Clone STM32CubeF4 HAL (shallow)
         run: |
-          mkdir -p Drivers
-          ST_HAL_URL="https://raw.githubusercontent.com/STMicroelectronics/STM32CubeF4/master/Drivers/STM32F4xx_HAL_Driver/Src"
-          ST_HAL_INC="https://raw.githubusercontent.com/STMicroelectronics/STM32CubeF4/master/Drivers/STM32F4xx_HAL_Driver/Inc"
-          ST_CMSIS="https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Include"
-          mkdir -p Drivers/STM32F4xx_HAL_Driver/Src
-          mkdir -p Drivers/STM32F4xx_HAL_Driver/Inc
+          git clone --depth 1 https://github.com/STMicroelectronics/STM32CubeF4.git cube_f4
+          mkdir -p Drivers/STM32F4xx_HAL_Driver
+          cp -r cube_f4/Drivers/STM32F4xx_HAL_Driver/Src Drivers/STM32F4xx_HAL_Driver/
+          cp -r cube_f4/Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/
+          rm -rf cube_f4
+
+      - name: Clone CMSIS device headers (shallow)
+        run: |
+          git clone --depth 1 https://github.com/STMicroelectronics/cmsis-device-f4.git cmsis_f4
+          mkdir -p Drivers/CMSIS/Device/ST/STM32F4xx
+          cp -r cmsis_f4/Include Drivers/CMSIS/Device/ST/STM32F4xx/
+          cp -r cmsis_f4/Source Drivers/CMSIS/Device/ST/STM32F4xx/
+          rm -rf cmsis_f4
+
+      - name: Fetch CMSIS Core headers
+        run: |
           mkdir -p Drivers/CMSIS/Include
-          mkdir -p Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc
-          mkdir -p Drivers/CMSIS/Device/ST/STM32F4xx/Include
-
-          HAL_SRC_FILES=(
-            stm32f4xx_hal.c stm32f4xx_hal_cortex.c stm32f4xx_hal_rcc.c
-            stm32f4xx_hal_gpio.c stm32f4xx_hal_spi.c stm32f4xx_hal_uart.c
-            stm32f4xx_hal_dac.c stm32f4xx_hal_tim.c stm32f4xx_hal_pwr.c
-            stm32f4xx_hal_flash.c
-          )
-          for f in "${HAL_SRC_FILES[@]}"; do
-            curl -sL "$ST_HAL_URL/$f" -o "Drivers/STM32F4xx_HAL_Driver/Src/$f"
-          done
-
-          HAL_INC_FILES=(
-            stm32f4xx_hal.h stm32f4xx_hal_def.h stm32f4xx_hal_rcc.h
-            stm32f4xx_hal_rcc_ex.h stm32f4xx_hal_gpio.h stm32f4xx_hal_gpio_ex.h
-            stm32f4xx_hal_dma.h stm32f4xx_hal_dma_ex.h stm32f4xx_hal_spi.h
-            stm32f4xx_hal_uart.h stm32f4xx_hal_dac.h stm32f4xx_hal_dac_ex.h
-            stm32f4xx_hal_tim.h stm32f4xx_hal_tim_ex.h stm32f4xx_hal_pwr.h
-            stm32f4xx_hal_pwr_ex.h stm32f4xx_hal_flash.h stm32f4xx_hal_flash_ex.h
-            stm32f4xx_hal_cortex.h
-          )
-          for f in "${HAL_INC_FILES[@]}"; do
-            curl -sL "$ST_HAL_INC/$f" -o "Drivers/STM32F4xx_HAL_Driver/Inc/$f"
-          done
-
-          curl -sL "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Source/Templates/gcc/startup_stm32f407xx.s" \
-            -o "Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f407xx.s"
-          curl -sL "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Include/stm32f4xx.h" \
-            -o "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
-          curl -sL "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Include/stm32f407xx.h" \
-            -o "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
-          curl -sL "https://raw.githubusercontent.com/STMicroelectronics/cmsis-device-f4/master/Include/system_stm32f4xx.h" \
-            -o "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
-          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/cmsis_compiler.h" \
-            -o "Drivers/CMSIS/Include/cmsis_compiler.h"
-          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/cmsis_gcc.h" \
-            -o "Drivers/CMSIS/Include/cmsis_gcc.h"
-          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/cmsis_version.h" \
-            -o "Drivers/CMSIS/Include/cmsis_version.h"
-          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/core_cm4.h" \
-            -o "Drivers/CMSIS/Include/core_cm4.h"
-          curl -sL "https://raw.githubusercontent.com/ARM-software/CMSIS_6/main/CMSIS/Core/Include/mpu_armv7.h" \
-            -o "Drivers/CMSIS/Include/mpu_armv7.h"
+          CMSIS_RAW="https://raw.githubusercontent.com/ARM-software/CMSIS_5/develop/CMSIS/Core/Include"
+          curl -fsSL "$CMSIS_RAW/cmsis_compiler.h" -o Drivers/CMSIS/Include/cmsis_compiler.h
+          curl -fsSL "$CMSIS_RAW/cmsis_gcc.h"      -o Drivers/CMSIS/Include/cmsis_gcc.h
+          curl -fsSL "$CMSIS_RAW/cmsis_version.h"  -o Drivers/CMSIS/Include/cmsis_version.h
+          curl -fsSL "$CMSIS_RAW/core_cm4.h"       -o Drivers/CMSIS/Include/core_cm4.h
+          curl -fsSL "$CMSIS_RAW/mpu_armv7.h"      -o Drivers/CMSIS/Include/mpu_armv7.h
 
       - name: Create linker script
         run: |

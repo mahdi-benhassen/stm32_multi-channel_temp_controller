@@ -55,7 +55,7 @@ void Output_Init(void) {
     HAL_DAC_SetValue(&hdac, dac_channels[0], DAC_ALIGN_12B_R, 0);
     HAL_DAC_SetValue(&hdac, dac_channels[1], DAC_ALIGN_12B_R, 0);
 
-#elif (ACTIVE_OUTPUT_MODE == OUTPUT_MODE_PWM)
+#elif (ACTIVE_OUTPUT_MODE == OUTPUT_MODE_PWM_VAL)
     /* Initialize PWM timer */
     __HAL_RCC_TIM2_CLK_ENABLE();
 
@@ -116,7 +116,7 @@ OutputStatus_t Output_SetChannel(uint8_t channel_index, float duty_cycle_pct) {
     HAL_DAC_SetValue(&hdac, dac_channels[channel_index], DAC_ALIGN_12B_R, ch->dac_value);
     HAL_DAC_Start(&hdac, dac_channels[channel_index]);
 
-#elif (ACTIVE_OUTPUT_MODE == OUTPUT_MODE_PWM)
+#elif (ACTIVE_OUTPUT_MODE == OUTPUT_MODE_PWM_VAL)
     ch->pwm_compare = (uint16_t)((duty_cycle_pct / 100.0f) * (float)(PWM_PERIOD + 1));
     if (ch->pwm_compare > PWM_PERIOD) ch->pwm_compare = PWM_PERIOD;
     __HAL_TIM_SET_COMPARE(&htim_pwm, pwm_channels[channel_index], ch->pwm_compare);

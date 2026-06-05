@@ -1,6 +1,7 @@
 #include "auto_tune.h"
 #include "pid_controller.h"
 #include "output_driver.h"
+#include <math.h>
 
 /* ==================== Ziegler-Nichols PID Tuning Rules ==================== */
 /*  P-only:     Kp = 0.5 * Ku

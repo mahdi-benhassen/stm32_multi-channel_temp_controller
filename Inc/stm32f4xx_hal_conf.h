@@ -1,0 +1,43 @@
+#ifndef STM32F4XX_HAL_CONF_H
+#define STM32F4XX_HAL_CONF_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define HAL_MODULE_ENABLED
+#define HAL_CORTEX_MODULE_ENABLED
+#define HAL_RCC_MODULE_ENABLED
+#define HAL_GPIO_MODULE_ENABLED
+#define HAL_DMA_MODULE_ENABLED
+#define HAL_SPI_MODULE_ENABLED
+#define HAL_UART_MODULE_ENABLED
+#define HAL_DAC_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
+#define HAL_PWR_MODULE_ENABLED
+#define HAL_FLASH_MODULE_ENABLED
+
+#define HSE_VALUE          8000000U
+#define HSE_STARTUP_TIMEOUT 100U
+#define HSI_VALUE          16000000U
+#define LSE_VALUE          32768U
+#define LSI_VALUE          32000U
+#define EXTERNAL_CLOCK_VALUE 12288000U
+
+#define VDD_VALUE          3300U
+#define PREFETCH_ENABLE    1U
+#define INSTRUCTION_CACHE_ENABLE  1U
+#define DATA_CACHE_ENABLE         1U
+
+#define USE_HAL_SPI_REGISTER_CALLBACKS 0U
+#define USE_HAL_UART_REGISTER_CALLBACKS 0U
+#define USE_HAL_TIM_REGISTER_CALLBACKS  0U
+#define USE_HAL_DAC_REGISTER_CALLBACKS  0U
+
+#define assert_param(expr) ((void)0U)
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* STM32F4XX_HAL_CONF_H */

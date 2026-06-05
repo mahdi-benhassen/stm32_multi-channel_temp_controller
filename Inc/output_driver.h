@@ -16,8 +16,4 @@ void            Output_Enable(uint8_t channel_index, bool enable);
 void            Output_EmergencyStop(void);
 void            Output_ClearEmergency(void);
 
-/* Internal helpers */
-static void     Output_WriteDAC(uint8_t channel_index, float duty_cycle_pct);
-static void     Output_WritePWM(uint8_t channel_index, float duty_cycle_pct);
-
 #endif /* OUTPUT_DRIVER_H */
