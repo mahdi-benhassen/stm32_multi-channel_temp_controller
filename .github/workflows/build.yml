@@ -43,11 +43,7 @@ jobs:
 
       - name: Fetch CMSIS Core headers
         run: |
-          git clone --depth 1 --filter=tree:0 https://github.com/ARM-software/CMSIS_5.git cmsis_core
-          cd cmsis_core
-          git sparse-checkout set --no-cone CMSIS/Core/Include
-          git checkout
-          cd ..
+          git clone --depth 1 https://github.com/ARM-software/CMSIS_5.git cmsis_core
           mkdir -p Drivers/CMSIS/Include
           cp cmsis_core/CMSIS/Core/Include/*.h Drivers/CMSIS/Include/
           rm -rf cmsis_core

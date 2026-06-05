@@ -6,11 +6,12 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 set(MCU_FAMILY STM32F4xx)
 set(MCU_MODEL  STM32F407VG)
+set(MCU_DEVICE STM32F407xx)
 
 # CPU flags and linker specs are provided by the toolchain file.
 # Append project-specific flags only:
 
-add_definitions(-D${MCU_FAMILY} -DUSE_HAL_DRIVER)
+add_definitions(-D${MCU_FAMILY} -D${MCU_DEVICE} -DUSE_HAL_DRIVER)
 
 # Source files
 set(CORE_SOURCES
