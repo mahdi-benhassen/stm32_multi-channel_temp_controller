@@ -7,20 +7,8 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(MCU_FAMILY STM32F4xx)
 set(MCU_MODEL  STM32F407VG)
 
-set(MCU_FLAGS
-    -mcpu=cortex-m4
-    -mthumb
-    -mfpu=fpv4-sp-d16
-    -mfloat-abi=hard
-    -Wall
-    -Os
-    -ffunction-sections
-    -fdata-sections
-)
-
-set(CMAKE_C_FLAGS   "${MCU_FLAGS}")
-set(CMAKE_ASM_FLAGS "${MCU_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "-specs=nosys.specs -specs=nano.specs -Wl,--gc-sections -T${CMAKE_SOURCE_DIR}/STM32F407VG_FLASH.ld")
+# CPU flags and linker specs are provided by the toolchain file.
+# Append project-specific flags only:
 
 add_definitions(-D${MCU_FAMILY} -DUSE_HAL_DRIVER)
 
