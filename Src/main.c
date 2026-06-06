@@ -188,8 +188,12 @@ static void SystemClock_Config(void) {
     RCC_OscInitStruct.PLL.PLLQ       = 7;
     HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
-    /* OverDrive */
+#if defined(PWR_CR_ODEN)
+    /* OverDrive (STM32F42x/F43x only) */
     HAL_PWREx_ActivateOverDrive();
+#elif defined(PWR_CR1_ODEN)
+    HAL_PWREx_ActivateOverDrive();
+#endif
 
     /* Initializes the CPU, AHB and APB busses clocks */
     RCC_ClkInitStruct.ClockType      = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
