@@ -54,17 +54,11 @@
 #define ACTIVE_OUTPUT_MODE       OUTPUT_MODE_PWM_VAL
 
 #define DAC_INSTANCE             DAC
-#define DAC_CHANNEL_1            DAC_CHANNEL_1
-#define DAC_CHANNEL_2            DAC_CHANNEL_2
 #define DAC_VREF_MV              3300
 #define DAC_OUTPUT_DIVIDER       3.3f  /* Voltage divider to scale 3.3V to 10V */
 
 #define PWM_FREQUENCY_HZ         1000
 #define PWM_TIMER_INSTANCE       TIM2
-#define PWM_TIMER_CHANNEL_1      TIM_CHANNEL_1
-#define PWM_TIMER_CHANNEL_2      TIM_CHANNEL_2
-#define PWM_TIMER_CHANNEL_3      TIM_CHANNEL_3
-#define PWM_TIMER_CHANNEL_4      TIM_CHANNEL_4
 #define PWM_PERIOD               9999  /* ARR value for 1kHz with 72MHz CLK, prescaler 7 */
 
 /* ==================== Networking Configuration ==================== */

@@ -8,10 +8,10 @@ static TIM_HandleTypeDef htim_pwm;
 
 /* ==================== PWM Timer Channels Lookup ==================== */
 static const uint32_t pwm_channels[NUM_OUTPUT_CHANNELS] = {
-    PWM_TIMER_CHANNEL_1,
-    PWM_TIMER_CHANNEL_2,
-    PWM_TIMER_CHANNEL_3,
-    PWM_TIMER_CHANNEL_4
+    TIM_CHANNEL_1,
+    TIM_CHANNEL_2,
+    TIM_CHANNEL_3,
+    TIM_CHANNEL_4
 };
 
 static const uint32_t dac_channels[NUM_OUTPUT_CHANNELS] = {
