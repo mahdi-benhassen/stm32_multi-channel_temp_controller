@@ -5,7 +5,41 @@
 extern "C" {
 #endif
 
-/* Pull in device-specific CMSIS header (defines __IO, uint32_t, GPIO_TypeDef, etc.) */
+/* ---- HAL Module Enables (must be before conditional includes) ---- */
+#define HAL_MODULE_ENABLED
+#define HAL_CORTEX_MODULE_ENABLED
+#define HAL_RCC_MODULE_ENABLED
+#define HAL_GPIO_MODULE_ENABLED
+#define HAL_DMA_MODULE_ENABLED
+#define HAL_SPI_MODULE_ENABLED
+#define HAL_UART_MODULE_ENABLED
+#define HAL_DAC_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
+#define HAL_PWR_MODULE_ENABLED
+#define HAL_FLASH_MODULE_ENABLED
+
+/* ---- Clock config values ---- */
+#define HSE_VALUE              8000000U
+#define HSE_STARTUP_TIMEOUT    100U
+#define HSI_VALUE              16000000U
+#define LSE_VALUE              32768U
+#define LSI_VALUE              32000U
+#define EXTERNAL_CLOCK_VALUE   12288000U
+
+#define VDD_VALUE              3300U
+#define PREFETCH_ENABLE        1U
+#define INSTRUCTION_CACHE_ENABLE  1U
+#define DATA_CACHE_ENABLE         1U
+#define TICK_INT_PRIORITY      0x0FU
+
+#define USE_HAL_SPI_REGISTER_CALLBACKS  0U
+#define USE_HAL_UART_REGISTER_CALLBACKS 0U
+#define USE_HAL_TIM_REGISTER_CALLBACKS  0U
+#define USE_HAL_DAC_REGISTER_CALLBACKS  0U
+
+#define assert_param(expr)    ((void)0U)
+
+/* ---- Device-specific CMSIS header ---- */
 #if defined(STM32F407xx)
   #include "stm32f407xx.h"
 #elif defined(STM32F405xx)
@@ -20,42 +54,52 @@ extern "C" {
   #error "Please define an STM32F4xx device: STM32F407xx, STM32F429xx, etc."
 #endif
 
-/* Pull in HAL common definitions (defines HAL_StatusTypeDef, etc.) */
+/* ---- HAL Core Headers (must precede module headers) ---- */
 #include "stm32f4xx_hal_def.h"
 
-/* ---- HAL module enable defines ---- */
-#define HAL_MODULE_ENABLED
-#define HAL_CORTEX_MODULE_ENABLED
-#define HAL_RCC_MODULE_ENABLED
-#define HAL_GPIO_MODULE_ENABLED
-#define HAL_DMA_MODULE_ENABLED
-#define HAL_SPI_MODULE_ENABLED
-#define HAL_UART_MODULE_ENABLED
-#define HAL_DAC_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
-#define HAL_PWR_MODULE_ENABLED
-#define HAL_FLASH_MODULE_ENABLED
+#ifdef HAL_MODULE_ENABLED
+  #include "stm32f4xx_hal.h"
+#endif
 
-/* ---- Clock config values ---- */
-#define HSE_VALUE          8000000U
-#define HSE_STARTUP_TIMEOUT 100U
-#define HSI_VALUE          16000000U
-#define LSE_VALUE          32768U
-#define LSI_VALUE          32000U
-#define EXTERNAL_CLOCK_VALUE 12288000U
+#ifdef HAL_CORTEX_MODULE_ENABLED
+  #include "stm32f4xx_hal_cortex.h"
+#endif
 
-#define VDD_VALUE          3300U
-#define PREFETCH_ENABLE    1U
-#define INSTRUCTION_CACHE_ENABLE  1U
-#define DATA_CACHE_ENABLE         1U
+#ifdef HAL_RCC_MODULE_ENABLED
+  #include "stm32f4xx_hal_rcc.h"
+#endif
 
-/* ---- HAL callback options ---- */
-#define USE_HAL_SPI_REGISTER_CALLBACKS 0U
-#define USE_HAL_UART_REGISTER_CALLBACKS 0U
-#define USE_HAL_TIM_REGISTER_CALLBACKS  0U
-#define USE_HAL_DAC_REGISTER_CALLBACKS  0U
+#ifdef HAL_GPIO_MODULE_ENABLED
+  #include "stm32f4xx_hal_gpio.h"
+#endif
 
-#define assert_param(expr) ((void)0U)
+#ifdef HAL_DMA_MODULE_ENABLED
+  #include "stm32f4xx_hal_dma.h"
+#endif
+
+#ifdef HAL_SPI_MODULE_ENABLED
+  #include "stm32f4xx_hal_spi.h"
+#endif
+
+#ifdef HAL_UART_MODULE_ENABLED
+  #include "stm32f4xx_hal_uart.h"
+#endif
+
+#ifdef HAL_DAC_MODULE_ENABLED
+  #include "stm32f4xx_hal_dac.h"
+#endif
+
+#ifdef HAL_TIM_MODULE_ENABLED
+  #include "stm32f4xx_hal_tim.h"
+#endif
+
+#ifdef HAL_PWR_MODULE_ENABLED
+  #include "stm32f4xx_hal_pwr.h"
+#endif
+
+#ifdef HAL_FLASH_MODULE_ENABLED
+  #include "stm32f4xx_hal_flash.h"
+#endif
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,7 @@
 #include "safety_monitor.h"
 #include "output_driver.h"
+#include <string.h>
+#include <math.h>
 
 void SafetyMonitor_Init(void) {
     g_sys.thermal_alarm_flags = 0;
