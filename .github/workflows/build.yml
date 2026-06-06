@@ -66,8 +66,9 @@ jobs:
             .text : { *(.text*) *(.glue_7) *(.glue_7t) } >FLASH
             .rodata : { *(.rodata*) } >FLASH
             .init_array : { __init_array_start = .; KEEP(*(SORT(.init_array.*))) KEEP(*(.init_array)) __init_array_end = .; } >FLASH
-            .data : { __data_start = .; *(.data*) __data_end = .; } >RAM AT>FLASH
-            .bss : { __bss_start = .; *(.bss*) *(COMMON) __bss_end = .; } >RAM
+            _sidata = LOADADDR(.data);
+            .data : { _sdata = .; *(.data*) _edata = .; } >RAM AT>FLASH
+            .bss : { _sbss = .; *(.bss*) *(COMMON) _ebss = .; } >RAM
           }
           LDEOL
 
