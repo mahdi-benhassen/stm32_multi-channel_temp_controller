@@ -6,7 +6,6 @@
 #include <stdbool.h>
 
 /* ==================== Platform Selection ==================== */
-#define STM32F407xx
 #define HAL_FRAMEWORK
 
 /* ==================== Sensor Configuration ==================== */
